@@ -1,5 +1,6 @@
 package uniquindio.edu.co.proyectofinal.model;
 
+import uniquindio.edu.co.proyectofinal.exception.AsientoOcupadoException;
 import uniquindio.edu.co.proyectofinal.model.enums.EstadoAsiento;
 
 public class Asiento {
@@ -32,7 +33,18 @@ public class Asiento {
         return estado;
     }
 
-    public void setEstado(EstadoAsiento estado) {
-        this.estado = estado;
+    public boolean estaDisponible() {
+        return estado == EstadoAsiento.DISPONIBLE;
+    }
+
+    public void ocupar() {
+        if (!estaDisponible()) {
+            throw new AsientoOcupadoException("El asiento " + codigo + " ya está ocupado");
+        }
+        estado = EstadoAsiento.OCUPADO;
+    }
+
+    public void liberar() {
+        estado = EstadoAsiento.DISPONIBLE;
     }
 }

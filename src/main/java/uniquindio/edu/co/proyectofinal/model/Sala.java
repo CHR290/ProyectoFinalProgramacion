@@ -3,9 +3,12 @@ package uniquindio.edu.co.proyectofinal.model;
 import uniquindio.edu.co.proyectofinal.model.enums.EstadoSala;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Sala {
+
+    private static final int ASIENTOS_POR_FILA = 10;
 
     private String codigo;
     private String nombre;
@@ -19,6 +22,8 @@ public class Sala {
         this.capacidad = capacidad;
         this.estado = EstadoSala.DISPONIBLE;
         this.asientos = new ArrayList<>();
+        validarCapacidad(capacidad);
+        generarAsientos();
     }
 
     public String getCodigo() {
@@ -29,27 +34,50 @@ public class Sala {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
     public int getCapacidad() {
         return capacidad;
-    }
-
-    public void setCapacidad(int capacidad) {
-        this.capacidad = capacidad;
     }
 
     public EstadoSala getEstado() {
         return estado;
     }
 
-    public void setEstado(EstadoSala estado) {
-        this.estado = estado;
+    public void modificar(String nombre, int capacidad) {
+        validarCapacidad(capacidad);
+        this.nombre = nombre;
+        if (capacidad != this.capacidad) {
+            this.capacidad = capacidad;
+            generarAsientos();
+        }
+    }
+
+    public boolean estaDisponible() {
+        return estado == EstadoSala.DISPONIBLE;
+    }
+
+    public void habilitar() {
+        estado = EstadoSala.DISPONIBLE;
+    }
+
+    public void deshabilitar() {
+        estado = EstadoSala.FUERA_DE_SERVICIO;
     }
 
     public List<Asiento> getAsientos() {
         return asientos;
+    }
+
+    public void generarAsientos(){
+        asientos.clear();
+        for (int i = 0; i < capacidad; i++) {
+            char fila = (char) ('A' + i / ASIENTOS_POR_FILA);
+            int numero = i % ASIENTOS_POR_FILA + 1;
+            asientos.add(new Asiento(fila, numero));
+        }
+    }
+    private void validarCapacidad(int capacidad) {
+        if (capacidad <= 0) {
+            throw new IllegalArgumentException("La capacidad debe ser mayor que cero");
+        }
     }
 }
