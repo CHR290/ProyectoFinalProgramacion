@@ -42,6 +42,10 @@ public class Sala {
         return estado;
     }
 
+    public int getAsientosPorFila() {
+        return ASIENTOS_POR_FILA;
+    }
+
     public void modificar(String nombre, int capacidad) {
         validarCapacidad(capacidad);
         this.nombre = nombre;
