@@ -2,17 +2,17 @@ package uniquindio.edu.co.proyectofinal.service;
 
 public class Reportes {
 
-    private Cine cine;
+    private Cinema cinema;
 
-    public Reportes(Cine cine) {
-        this.cine = cine;
+    public Reportes(Cinema cinema) {
+        this.cinema = cinema;
     }
 
-    public Cine getCine() {
-        return cine;
+    public Cinema getCine() {
+        return cinema;
     }
 
-    public void setCine(Cine cine) {
-        this.cine = cine;
+    public void setCine(Cinema cinema) {
+        this.cinema = cinema;
     }
 }
