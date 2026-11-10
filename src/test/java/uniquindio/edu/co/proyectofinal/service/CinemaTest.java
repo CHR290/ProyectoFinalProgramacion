@@ -4,11 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import uniquindio.edu.co.proyectofinal.exception.*;
+import uniquindio.edu.co.proyectofinal.model.Cliente;
 import uniquindio.edu.co.proyectofinal.model.Pelicula;
 import uniquindio.edu.co.proyectofinal.model.Sala;
 import uniquindio.edu.co.proyectofinal.model.enums.Clasificacion;
 import uniquindio.edu.co.proyectofinal.model.Funcion;
 import uniquindio.edu.co.proyectofinal.model.enums.EstadoFuncion;
+import uniquindio.edu.co.proyectofinal.model.enums.TipoCliente;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -157,9 +159,9 @@ class CinemaTest {
         private static final LocalTime HORA = LocalTime.of(19, 0);
 
         // Crea la película P001 y la sala S001 con la capacidad indicada
-        private void datosBase(int capacidadSala) {
+        private void datosBase() {
             cinema.registrarPelicula("Interestelar", "Ciencia ficción", 169, Clasificacion.MAYORES_12);
-            cinema.registrarSala("Sala 1", capacidadSala);
+            cinema.registrarSala("Sala 1", 4);
         }
 
         private Funcion programar(LocalDate fecha) {
@@ -168,13 +170,13 @@ class CinemaTest {
 
         @Test
         void programarFuncion_generaCodigoF001() {
-            datosBase(4);
+            datosBase();
             assertEquals("F001", programar(FECHA).getCodigo());
         }
 
         @Test
         void programarFuncion_copiaLosAsientosDeLaSala() {
-            datosBase(4);
+            datosBase();
             Funcion f = programar(FECHA);
 
             assertEquals(4, f.getAsientos().size());
@@ -183,14 +185,14 @@ class CinemaTest {
 
         @Test
         void programarFuncion_peliculaNoEncontrada_lanzaExcepcion() {
-            datosBase(4);
+            datosBase();
             assertThrows(PeliculaNoEncontradaException.class,
                     () -> cinema.programarFuncion("P999", "S001", FECHA, HORA, 15000));
         }
 
         @Test
         void programarFuncion_peliculaDeshabilitada_lanzaExcepcion() {
-            datosBase(4);
+            datosBase();
             cinema.deshabilitarPelicula("P001");
 
             assertThrows(PeliculaNoDisponibleException.class, () -> programar(FECHA));
@@ -198,14 +200,14 @@ class CinemaTest {
 
         @Test
         void programarFuncion_salaNoEncontrada_lanzaExcepcion() {
-            datosBase(4);
+            datosBase();
             assertThrows(SalaNoEncontradaException.class,
                     () -> cinema.programarFuncion("P001", "S999", FECHA, HORA, 15000));
         }
 
         @Test
         void programarFuncion_salaFueraDeServicio_lanzaExcepcion() {
-            datosBase(4);
+            datosBase();
             cinema.deshabilitarSala("S001");
 
             assertThrows(SalaNoDisponibleException.class, () -> programar(FECHA));
@@ -213,7 +215,7 @@ class CinemaTest {
 
         @Test
         void programarFuncion_fallida_noConsumeCodigo() {
-            datosBase(4);
+            datosBase();
             assertThrows(PeliculaNoEncontradaException.class,
                     () -> cinema.programarFuncion("P999", "S001", FECHA, HORA, 15000));
 
@@ -222,7 +224,7 @@ class CinemaTest {
 
         @Test
         void buscarFuncion_existente_devuelveLaFuncion() {
-            datosBase(4);
+            datosBase();
             Funcion creada = programar(FECHA);
 
             assertSame(creada, cinema.buscarFuncion("F001"));
@@ -236,7 +238,7 @@ class CinemaTest {
 
         @Test
         void consultarFuncionesPorFecha_filtraPorFecha() {
-            datosBase(4);
+            datosBase();
             programar(LocalDate.of(2026, 11, 20));
             programar(LocalDate.of(2026, 11, 21));
 
@@ -248,7 +250,7 @@ class CinemaTest {
 
         @Test
         void cancelarFuncion_cambiaEstadoACancelada() {
-            datosBase(4);
+            datosBase();
             programar(FECHA);
 
             cinema.cancelarFuncion("F001");
@@ -258,7 +260,7 @@ class CinemaTest {
 
         @Test
         void finalizarFuncion_cambiaEstadoAFinalizada() {
-            datosBase(4);
+            datosBase();
             programar(FECHA);
 
             cinema.finalizarFuncion("F001");
@@ -270,6 +272,68 @@ class CinemaTest {
         void cancelarFuncion_inexistente_lanzaExcepcion() {
             assertThrows(FuncionNoEncontradaException.class,
                     () -> cinema.cancelarFuncion("F999"));
+        }
+    }
+    @Nested
+    class Clientes {
+
+        @Test
+        void existeCliente_inexistente_devuelveFalse() {
+            assertFalse(cinema.existeCliente("123"));
+        }
+
+        @Test
+        void existeCliente_registrado_devuelveTrue() {
+            cinema.registrarCliente("123", "Ana", TipoCliente.GENERAL);
+            assertTrue(cinema.existeCliente("123"));
+        }
+
+        @Test
+        void registrarCliente_quedaEnLaLista() {
+            Cliente c = cinema.registrarCliente("123", "Ana", TipoCliente.GENERAL);
+
+            assertEquals("123", c.getIdentificacion());
+            assertTrue(cinema.consultarClientes().contains(c));
+        }
+
+        @Test
+        void registrarCliente_guardaNombreYTipo() {
+            Cliente c = cinema.registrarCliente("123", "Ana", TipoCliente.ESTUDIANTE);
+
+            assertEquals("Ana", c.getNombre());
+            assertEquals(TipoCliente.ESTUDIANTE, c.getTipoCliente());
+        }
+
+        @Test
+        void registrarCliente_duplicado_lanzaExcepcionSinCambiarNada() {
+            cinema.registrarCliente("123", "Ana", TipoCliente.GENERAL);
+
+            assertThrows(ClienteDuplicadoException.class,
+                    () -> cinema.registrarCliente("123", "Otro nombre", TipoCliente.ESTUDIANTE));
+
+            assertEquals(1, cinema.consultarClientes().size());
+            assertEquals("Ana", cinema.buscarCliente("123").getNombre());
+        }
+
+        @Test
+        void buscarCliente_existente_devuelveElCliente() {
+            Cliente registrado = cinema.registrarCliente("123", "Ana", TipoCliente.GENERAL);
+
+            assertSame(registrado, cinema.buscarCliente("123"));
+        }
+
+        @Test
+        void buscarCliente_inexistente_lanzaExcepcion() {
+            assertThrows(ClienteNoEncontradoException.class,
+                    () -> cinema.buscarCliente("999"));
+        }
+
+        @Test
+        void consultarClientes_noPermiteModificarLaLista() {
+            cinema.registrarCliente("123", "Ana", TipoCliente.GENERAL);
+
+            assertThrows(UnsupportedOperationException.class,
+                    () -> cinema.consultarClientes().clear());
         }
     }
 }

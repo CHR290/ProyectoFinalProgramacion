@@ -1,14 +1,10 @@
 package uniquindio.edu.co.proyectofinal.service;
 
-import uniquindio.edu.co.proyectofinal.exception.PeliculaDuplicadaException;
-import uniquindio.edu.co.proyectofinal.exception.PeliculaNoEncontradaException;
-import uniquindio.edu.co.proyectofinal.exception.SalaDuplicadaException;
-import uniquindio.edu.co.proyectofinal.exception.SalaNoEncontradaException;
-import uniquindio.edu.co.proyectofinal.exception.FuncionNoEncontradaException;
-import uniquindio.edu.co.proyectofinal.exception.PeliculaNoDisponibleException;
-import uniquindio.edu.co.proyectofinal.exception.SalaNoDisponibleException;
+import uniquindio.edu.co.proyectofinal.exception.*;
 import uniquindio.edu.co.proyectofinal.model.*;
 import uniquindio.edu.co.proyectofinal.model.enums.Clasificacion;
+import uniquindio.edu.co.proyectofinal.model.enums.TipoCliente;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -182,5 +178,42 @@ public class Cinema {
 
     public void finalizarFuncion(String codigo) {
         buscarFuncion(codigo).finalizar();
+    }
+
+    public boolean existeCliente(String identificacion) {
+        return buscarClienteOpcional(identificacion) != null;
+    }
+
+    public Cliente registrarCliente(String identificacion, String nombreCliente,
+                                    TipoCliente tipo) {
+        if (existeCliente(identificacion)) {
+            throw new ClienteDuplicadoException(
+                    "Ya existe un cliente con identificación " + identificacion);
+        }
+        Cliente nuevo = new Cliente(identificacion, nombreCliente, tipo);
+        clientes.add(nuevo);
+        return nuevo;
+    }
+
+    public Cliente buscarCliente(String identificacion) {
+        Cliente cliente = buscarClienteOpcional(identificacion);
+        if (cliente == null) {
+            throw new ClienteNoEncontradoException(
+                    "No existe el cliente con identificación " + identificacion);
+        }
+        return cliente;
+    }
+
+    public List<Cliente> consultarClientes() {
+        return Collections.unmodifiableList(clientes);
+    }
+
+    private Cliente buscarClienteOpcional(String identificacion) {
+        for (Cliente cliente : clientes) {
+            if (cliente.getIdentificacion().equals(identificacion)) {
+                return cliente;
+            }
+        }
+        return null;
     }
 }
