@@ -14,6 +14,7 @@ public class Pelicula {
 
     public Pelicula(String codigo, String nombre, String genero,
                     int duracionMinutos, Clasificacion clasificacion) {
+        validarDuracion(duracionMinutos);
         this.codigo = codigo;
         this.nombre = nombre;
         this.genero = genero;
@@ -30,39 +31,46 @@ public class Pelicula {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
     public String getGenero() {
         return genero;
-    }
-
-    public void setGenero(String genero) {
-        this.genero = genero;
     }
 
     public int getDuracionMinutos() {
         return duracionMinutos;
     }
 
-    public void setDuracionMinutos(int duracionMinutos) {
-        this.duracionMinutos = duracionMinutos;
-    }
-
     public Clasificacion getClasificacion() {
         return clasificacion;
     }
 
-    public void setClasificacion(Clasificacion clasificacion) {
-        this.clasificacion = clasificacion;
-    }
-
-    public EstadoPelicula getEstado() {
+    public EstadoPelicula getEstado(){
         return estado;
     }
 
-    public void setEstado(EstadoPelicula estado) {
-        this.estado = estado;
+    public boolean estaDisponible() {
+        return estado == EstadoPelicula.DISPONIBLE;
+    }
+
+    public void modificar(String nombre, String genero,
+                          int duracionMinutos, Clasificacion clasificacion) {
+        validarDuracion(duracionMinutos);
+        this.nombre = nombre;
+        this.genero = genero;
+        this.duracionMinutos = duracionMinutos;
+        this.clasificacion = clasificacion;
+    }
+
+    public void habilitar(){
+        estado = EstadoPelicula.DISPONIBLE;
+    }
+
+    public void deshabilitar() {
+        estado = EstadoPelicula.NO_DISPONIBLE;
+    }
+
+    private void validarDuracion(int duracionMinutos) {
+        if (duracionMinutos <= 0) {
+            throw new IllegalArgumentException("La duración debe ser mayor que cero");
+        }
     }
 }
