@@ -256,6 +256,11 @@ public class Cinema {
 
     public void cancelarVenta(String codigo) {
         Venta venta = buscarVenta(codigo);
+        if (venta.getFuncion().getEstado() == EstadoFuncion.FINALIZADA) {
+            throw new FuncionNoDisponibleException(
+                    "No se puede cancelar la venta " + codigo
+                            + " porque la función ya finalizó");
+        }
         venta.cancelar();
         venta.getAsiento().liberar();
     }

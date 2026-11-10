@@ -518,5 +518,29 @@ class CinemaTest {
             assertThrows(UnsupportedOperationException.class,
                     () -> cinema.consultarVentas().clear());
         }
+
+        @Test
+        void cancelarVenta_funcionFinalizada_lanzaExcepcionYConservaLaVenta() {
+            datosBase();
+            vender();
+            cinema.finalizarFuncion("F001");
+
+            assertThrows(FuncionNoDisponibleException.class,
+                    () -> cinema.cancelarVenta("V001"));
+
+            assertEquals(EstadoVenta.ACTIVA, cinema.buscarVenta("V001").getEstado());
+            assertFalse(cinema.buscarFuncion("F001").buscarAsiento("A1").estaDisponible());
+        }
+
+        @Test
+        void cancelarVenta_funcionCancelada_sigueSiendoPermitido() {
+            datosBase();
+            vender();
+            cinema.cancelarFuncion("F001");
+
+            cinema.cancelarVenta("V001");
+
+            assertEquals(EstadoVenta.CANCELADA, cinema.buscarVenta("V001").getEstado());
+        }
     }
 }
