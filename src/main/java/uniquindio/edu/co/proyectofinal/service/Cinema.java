@@ -2,10 +2,9 @@ package uniquindio.edu.co.proyectofinal.service;
 
 import uniquindio.edu.co.proyectofinal.exception.*;
 import uniquindio.edu.co.proyectofinal.model.*;
-import uniquindio.edu.co.proyectofinal.model.enums.Clasificacion;
-import uniquindio.edu.co.proyectofinal.model.enums.TipoCliente;
-
+import uniquindio.edu.co.proyectofinal.model.enums.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -215,5 +214,34 @@ public class Cinema {
             }
         }
         return null;
+    }
+
+    public Venta venderEntrada(String codigoFuncion, String identificacionCliente,
+                               TipoEntrada tipo, String codigoAsiento) {
+        Funcion funcion = buscarFuncion(codigoFuncion);
+        if (funcion.getEstado() != EstadoFuncion.PROGRAMADA) {
+            throw new FuncionNoDisponibleException(
+                    "La función " + codigoFuncion + " no está disponible para la venta");
+        }
+
+        Cliente cliente = buscarCliente(identificacionCliente);
+
+        if (!funcion.tieneAsientosDisponibles()) {
+            throw new AsientosAgotadosException(
+                    "La función " + codigoFuncion + " no tiene asientos disponibles");
+        }
+
+        Asiento asiento = funcion.buscarAsiento(codigoAsiento);
+        if (!asiento.estaDisponible()) {
+            throw new AsientoOcupadoException(
+                    "El asiento " + codigoAsiento + " ya está ocupado");
+        }
+
+        String codigo = generarCodigo('V', contadorVentas + 1);
+        Venta venta = new Venta(codigo, cliente, funcion, asiento, tipo, LocalDateTime.now());
+        asiento.ocupar();
+        ventas.add(venta);
+        contadorVentas++;
+        return venta;
     }
 }

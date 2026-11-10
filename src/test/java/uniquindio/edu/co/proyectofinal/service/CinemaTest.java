@@ -4,14 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import uniquindio.edu.co.proyectofinal.exception.*;
-import uniquindio.edu.co.proyectofinal.model.Cliente;
-import uniquindio.edu.co.proyectofinal.model.Pelicula;
-import uniquindio.edu.co.proyectofinal.model.Sala;
-import uniquindio.edu.co.proyectofinal.model.enums.Clasificacion;
-import uniquindio.edu.co.proyectofinal.model.Funcion;
-import uniquindio.edu.co.proyectofinal.model.enums.EstadoFuncion;
-import uniquindio.edu.co.proyectofinal.model.enums.TipoCliente;
-
+import uniquindio.edu.co.proyectofinal.model.*;
+import uniquindio.edu.co.proyectofinal.model.enums.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -158,7 +152,6 @@ class CinemaTest {
         private static final LocalDate FECHA = LocalDate.of(2026, 11, 20);
         private static final LocalTime HORA = LocalTime.of(19, 0);
 
-        // Crea la película P001 y la sala S001 con la capacidad indicada
         private void datosBase() {
             cinema.registrarPelicula("Interestelar", "Ciencia ficción", 169, Clasificacion.MAYORES_12);
             cinema.registrarSala("Sala 1", 4);
@@ -334,6 +327,104 @@ class CinemaTest {
 
             assertThrows(UnsupportedOperationException.class,
                     () -> cinema.consultarClientes().clear());
+        }
+    }
+
+    @Nested
+    class Ventas {
+
+        private void datosBase(int capacidadSala) {
+            cinema.registrarPelicula("Interestelar", "Ciencia ficción", 169, Clasificacion.MAYORES_12);
+            cinema.registrarSala("Sala 1", capacidadSala);
+            cinema.programarFuncion("P001", "S001",
+                    LocalDate.of(2026, 11, 20), LocalTime.of(19, 0), 15000);
+            cinema.registrarCliente("123", "Ana", TipoCliente.GENERAL);
+        }
+
+        private Venta vender(String codigoAsiento) {
+            return cinema.venderEntrada("F001", "123", TipoEntrada.GENERAL, codigoAsiento);
+        }
+
+        @Test
+        void venderEntrada_generaCodigoV001() {
+            datosBase(4);
+            assertEquals("V001", vender("A1").getCodigo());
+        }
+
+        @Test
+        void venderEntrada_quedaActiva() {
+            datosBase(4);
+            assertEquals(EstadoVenta.ACTIVA, vender("A1").getEstado());
+        }
+
+        @Test
+        void venderEntrada_ocupaElAsiento() {
+            datosBase(4);
+            vender("A1");
+
+            assertFalse(cinema.buscarFuncion("F001").buscarAsiento("A1").estaDisponible());
+            assertEquals(1, cinema.buscarFuncion("F001").getAsientosOcupados());
+        }
+
+        @Test
+        void venderEntrada_valorPagadoEsPrecioDelTipo() {
+            datosBase(4);
+            Venta v = cinema.venderEntrada("F001", "123", TipoEntrada.ESTUDIANTE, "A1");
+
+            assertEquals(TipoEntrada.ESTUDIANTE.getPrecio(), v.getValorPagado());
+        }
+
+        @Test
+        void venderEntrada_funcionNoEncontrada_lanzaExcepcion() {
+            datosBase(4);
+            assertThrows(FuncionNoEncontradaException.class,
+                    () -> cinema.venderEntrada("F999", "123", TipoEntrada.GENERAL, "A1"));
+        }
+
+        @Test
+        void venderEntrada_funcionCancelada_lanzaExcepcion() {
+            datosBase(4);
+            cinema.cancelarFuncion("F001");
+
+            assertThrows(FuncionNoDisponibleException.class, () -> vender("A1"));
+        }
+
+        @Test
+        void venderEntrada_clienteNoRegistrado_lanzaExcepcion() {
+            datosBase(4);
+            assertThrows(ClienteNoEncontradoException.class,
+                    () -> cinema.venderEntrada("F001", "999", TipoEntrada.GENERAL, "A1"));
+        }
+
+        @Test
+        void venderEntrada_asientoNoEncontrado_lanzaExcepcion() {
+            datosBase(4);
+            assertThrows(AsientoNoEncontradoException.class, () -> vender("Z9"));
+        }
+
+        @Test
+        void venderEntrada_asientoOcupado_lanzaExcepcion() {
+            datosBase(4);
+            vender("A1");
+
+            assertThrows(AsientoOcupadoException.class, () -> vender("A1"));
+        }
+
+        @Test
+        void venderEntrada_fallida_noConsumeCodigo() {
+            datosBase(4);
+            vender("A1");
+            assertThrows(AsientoOcupadoException.class, () -> vender("A1"));
+
+            assertEquals("V002", vender("A2").getCodigo());
+        }
+
+        @Test
+        void venderEntrada_funcionAgotada_lanzaAgotadosAntesDeValidarElAsiento() {
+            datosBase(2);
+            vender("A1");
+            vender("A2");
+            assertThrows(AsientosAgotadosException.class, () -> vender("A1"));
         }
     }
 }
