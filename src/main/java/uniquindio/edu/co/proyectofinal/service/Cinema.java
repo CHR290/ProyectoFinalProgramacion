@@ -244,4 +244,23 @@ public class Cinema {
         contadorVentas++;
         return venta;
     }
+
+    public Venta buscarVenta(String codigo) {
+        for (Venta venta : ventas) {
+            if (venta.getCodigo().equals(codigo)) {
+                return venta;
+            }
+        }
+        throw new VentaNoEncontradaException("No existe la venta " + codigo);
+    }
+
+    public void cancelarVenta(String codigo) {
+        Venta venta = buscarVenta(codigo);
+        venta.cancelar();
+        venta.getAsiento().liberar();
+    }
+
+    public List<Venta> consultarVentas() {
+        return Collections.unmodifiableList(ventas);
+    }
 }

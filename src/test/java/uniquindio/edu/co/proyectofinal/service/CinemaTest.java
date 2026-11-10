@@ -427,4 +427,96 @@ class CinemaTest {
             assertThrows(AsientosAgotadosException.class, () -> vender("A1"));
         }
     }
+    @Nested
+    class Cancelaciones {
+
+        // Película P001, sala S001 de 4 asientos, función F001 y cliente "123"
+        private void datosBase() {
+            cinema.registrarPelicula("Interestelar", "Ciencia ficción", 169, Clasificacion.MAYORES_12);
+            cinema.registrarSala("Sala 1", 4);
+            cinema.programarFuncion("P001", "S001",
+                    LocalDate.of(2026, 11, 20), LocalTime.of(19, 0), 15000);
+            cinema.registrarCliente("123", "Ana", TipoCliente.GENERAL);
+        }
+
+        private Venta vender() {
+            return cinema.venderEntrada("F001", "123", TipoEntrada.GENERAL, "A1");
+        }
+
+        @Test
+        void cancelarVenta_cambiaEstadoACancelada() {
+            datosBase();
+            vender();
+
+            cinema.cancelarVenta("V001");
+
+            assertEquals(EstadoVenta.CANCELADA, cinema.buscarVenta("V001").getEstado());
+        }
+
+        @Test
+        void cancelarVenta_liberaElAsiento() {
+            datosBase();
+            vender();
+
+            cinema.cancelarVenta("V001");
+
+            assertTrue(cinema.buscarFuncion("F001").buscarAsiento("A1").estaDisponible());
+        }
+
+        @Test
+        void cancelarVenta_permiteVenderDeNuevoElMismoAsiento() {
+            datosBase();
+            vender();
+            cinema.cancelarVenta("V001");
+
+            Venta nueva = vender();
+
+            assertEquals("V002", nueva.getCodigo());
+            assertFalse(cinema.buscarFuncion("F001").buscarAsiento("A1").estaDisponible());
+        }
+
+        @Test
+        void cancelarVenta_yaCancelada_noLiberaUnAsientoReservadoDeNuevo() {
+            datosBase();
+            vender();
+            cinema.cancelarVenta("V001");
+            vender(); // V002 ocupa A1
+
+            assertThrows(VentaYaCanceladaException.class,
+                    () -> cinema.cancelarVenta("V001"));
+
+            assertFalse(cinema.buscarFuncion("F001").buscarAsiento("A1").estaDisponible());
+        }
+
+        @Test
+        void cancelarVenta_inexistente_lanzaExcepcion() {
+            datosBase();
+            assertThrows(VentaNoEncontradaException.class,
+                    () -> cinema.cancelarVenta("V999"));
+        }
+
+        @Test
+        void buscarVenta_existente_devuelveLaVenta() {
+            datosBase();
+            Venta creada = vender();
+
+            assertSame(creada, cinema.buscarVenta("V001"));
+        }
+
+        @Test
+        void buscarVenta_inexistente_lanzaExcepcion() {
+            datosBase();
+            assertThrows(VentaNoEncontradaException.class,
+                    () -> cinema.buscarVenta("V999"));
+        }
+
+        @Test
+        void consultarVentas_noPermiteModificarLaLista() {
+            datosBase();
+            vender();
+
+            assertThrows(UnsupportedOperationException.class,
+                    () -> cinema.consultarVentas().clear());
+        }
+    }
 }
