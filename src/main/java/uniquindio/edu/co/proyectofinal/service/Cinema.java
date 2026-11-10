@@ -4,9 +4,13 @@ import uniquindio.edu.co.proyectofinal.exception.PeliculaDuplicadaException;
 import uniquindio.edu.co.proyectofinal.exception.PeliculaNoEncontradaException;
 import uniquindio.edu.co.proyectofinal.exception.SalaDuplicadaException;
 import uniquindio.edu.co.proyectofinal.exception.SalaNoEncontradaException;
+import uniquindio.edu.co.proyectofinal.exception.FuncionNoEncontradaException;
+import uniquindio.edu.co.proyectofinal.exception.PeliculaNoDisponibleException;
+import uniquindio.edu.co.proyectofinal.exception.SalaNoDisponibleException;
 import uniquindio.edu.co.proyectofinal.model.*;
 import uniquindio.edu.co.proyectofinal.model.enums.Clasificacion;
-
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -126,5 +130,57 @@ public class Cinema {
 
     private String generarCodigo(char inicial, int numero) {
         return String.format("%c%03d", inicial, numero);
+    }
+
+    public Funcion programarFuncion(String codigoPelicula, String codigoSala,
+                                    LocalDate fecha, LocalTime hora, double valorBase) {
+        Pelicula pelicula = buscarPelicula(codigoPelicula);
+        if (!pelicula.estaDisponible()) {
+            throw new PeliculaNoDisponibleException(
+                    "La película " + codigoPelicula + " no está disponible");
+        }
+
+        Sala sala = buscarSala(codigoSala);
+        if (!sala.estaDisponible()) {
+            throw new SalaNoDisponibleException(
+                    "La sala " + codigoSala + " está fuera de servicio");
+        }
+
+        String codigo = generarCodigo('F', contadorFunciones + 1);
+        Funcion funcion = new Funcion(codigo, pelicula, sala, fecha, hora, valorBase);
+        funciones.add(funcion);
+        contadorFunciones++;
+        return funcion;
+    }
+
+    public Funcion buscarFuncion(String codigo) {
+        for (Funcion funcion : funciones) {
+            if (funcion.getCodigo().equals(codigo)) {
+                return funcion;
+            }
+        }
+        throw new FuncionNoEncontradaException("No existe la función " + codigo);
+    }
+
+    public List<Funcion> consultarFunciones() {
+        return Collections.unmodifiableList(funciones);
+    }
+
+    public List<Funcion> consultarFuncionesPorFecha(LocalDate fecha) {
+        List<Funcion> resultado = new ArrayList<>();
+        for (Funcion funcion : funciones) {
+            if (funcion.getFecha().equals(fecha)) {
+                resultado.add(funcion);
+            }
+        }
+        return resultado;
+    }
+
+    public void cancelarFuncion(String codigo) {
+        buscarFuncion(codigo).cancelar();
+    }
+
+    public void finalizarFuncion(String codigo) {
+        buscarFuncion(codigo).finalizar();
     }
 }
