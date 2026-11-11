@@ -229,6 +229,11 @@ public class Cinema {
         }
 
         Cliente cliente = buscarCliente(identificacionCliente);
+        if (!tipo.permitidaPara(cliente.getTipoCliente())) {
+            throw new TipoEntradaNoPermitidaException(
+                    "La entrada " + tipo + " solo está disponible para clientes "
+                            + tipo.getPerfilRequerido());
+        }
 
         if (!funcion.tieneAsientosDisponibles()) {
             throw new AsientosAgotadosException(

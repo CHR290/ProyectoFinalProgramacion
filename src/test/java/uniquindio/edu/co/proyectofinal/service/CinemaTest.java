@@ -369,7 +369,9 @@ class CinemaTest {
         @Test
         void venderEntrada_valorPagadoEsPrecioDelTipo() {
             datosBase(4);
-            Venta v = cinema.venderEntrada("F001", "123", TipoEntrada.ESTUDIANTE, "A1");
+            cinema.registrarCliente("200", "Luis", TipoCliente.ESTUDIANTE);
+
+            Venta v = cinema.venderEntrada("F001", "200", TipoEntrada.ESTUDIANTE, "A1");
 
             assertEquals(TipoEntrada.ESTUDIANTE.getPrecio(), v.getValorPagado());
         }
@@ -541,6 +543,33 @@ class CinemaTest {
             cinema.cancelarVenta("V001");
 
             assertEquals(EstadoVenta.CANCELADA, cinema.buscarVenta("V001").getEstado());
+        }
+        @Test
+        void venderEntrada_general_aClienteEstudiante_esPermitido() {
+            datosBase();
+            cinema.registrarCliente("200", "Luis", TipoCliente.ESTUDIANTE);
+
+            Venta v = cinema.venderEntrada("F001", "200", TipoEntrada.GENERAL, "A1");
+
+            assertEquals("V001", v.getCodigo());
+        }
+
+        @Test
+        void venderEntrada_estudiante_aClienteGeneral_lanzaExcepcion() {
+            datosBase();
+
+            assertThrows(TipoEntradaNoPermitidaException.class,
+                    () -> cinema.venderEntrada("F001", "123", TipoEntrada.ESTUDIANTE, "A1"));
+        }
+
+        @Test
+        void venderEntrada_tipoNoPermitido_noOcupaAsientoNiConsumeCodigo() {
+            datosBase();
+            assertThrows(TipoEntradaNoPermitidaException.class,
+                    () -> cinema.venderEntrada("F001", "123", TipoEntrada.ESTUDIANTE, "A1"));
+
+            assertTrue(cinema.buscarFuncion("F001").buscarAsiento("A1").estaDisponible());
+            assertEquals("V001", vender().getCodigo());
         }
     }
 }

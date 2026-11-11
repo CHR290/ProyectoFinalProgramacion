@@ -30,6 +30,7 @@ class ReportesTest {
         cinema.programarFuncion("P002", "S001",
                 LocalDate.of(2026, 11, 21), LocalTime.of(19, 0), 15000);
         cinema.registrarCliente("123", "Ana", TipoCliente.GENERAL);
+        cinema.registrarCliente("321", "Pepe", TipoCliente.ESTUDIANTE);
     }
 
     @Test
@@ -54,7 +55,7 @@ class ReportesTest {
         double precioEstudiante = TipoEntrada.ESTUDIANTE.getPrecio();
 
         cinema.venderEntrada("F001", "123", TipoEntrada.GENERAL, "A1");
-        cinema.venderEntrada("F001", "123", TipoEntrada.ESTUDIANTE, "A2");
+        cinema.venderEntrada("F001", "321", TipoEntrada.ESTUDIANTE, "A2");
         assertEquals(precioGeneral + precioEstudiante, reportes.totalIngresos(), 0.001);
 
         cinema.cancelarVenta("V001");

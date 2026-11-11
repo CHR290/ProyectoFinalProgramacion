@@ -21,9 +21,9 @@ class SalaTest {
         List<Asiento> asientos = sala.getAsientos();
 
         assertEquals("A1", asientos.get(0).getCodigo());
-        assertEquals("A10", asientos.get(9).getCodigo());
-        assertEquals("B1", asientos.get(10).getCodigo());
-        assertEquals("C5", asientos.get(24).getCodigo());
+        assertEquals("B5", asientos.get(9).getCodigo());
+        assertEquals("C1", asientos.get(10).getCodigo());
+        assertEquals("E5", asientos.get(24).getCodigo());
     }
 
     @Test
