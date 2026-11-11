@@ -113,6 +113,10 @@ public class Cinema {
         buscarSala(codigo).deshabilitar();
     }
 
+    public void habilitarSala(String codigo) {
+        buscarSala(codigo).habilitar();
+    }
+
     private void validarNombreSalaLibre(String nombreSala, String codigoIgnorado) {
         for (Sala sala : salas) {
             if (sala.getNombre().equalsIgnoreCase(nombreSala)

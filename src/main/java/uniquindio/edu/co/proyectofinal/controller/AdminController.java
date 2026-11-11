@@ -136,6 +136,11 @@ public class AdminController extends ControladorBase {
         App.cambiarVista("menu-view.fxml");
     }
 
+    @FXML
+    private void irASalas() {
+        App.cambiarVista("sala-view.fxml");
+    }
+
     private void refrescarTabla() {
         datos.setAll(cinema.consultarPeliculas());
         actualizarBotones(tablaPeliculas.getSelectionModel().getSelectedItem());
