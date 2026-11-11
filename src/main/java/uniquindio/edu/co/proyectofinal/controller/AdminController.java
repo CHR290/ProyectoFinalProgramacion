@@ -141,6 +141,11 @@ public class AdminController extends ControladorBase {
         App.cambiarVista("sala-view.fxml");
     }
 
+    @FXML
+    private void irAFunciones() {
+        App.cambiarVista("funcion-view.fxml");
+    }
+
     private void refrescarTabla() {
         datos.setAll(cinema.consultarPeliculas());
         actualizarBotones(tablaPeliculas.getSelectionModel().getSelectedItem());
@@ -165,8 +170,6 @@ public class AdminController extends ControladorBase {
     private void mostrarMensaje(String texto) {
         lblMensaje.setText(texto);
     }
-
-    // ===== Validación de formulario (solo formato; las reglas de negocio están en Cinema) =====
 
     private String leerNombre() {
         String texto = txtNombre.getText().trim();

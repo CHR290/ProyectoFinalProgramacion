@@ -121,6 +121,11 @@ public class SalaController extends ControladorBase {
     private void irAPeliculas() {
         App.cambiarVista("admin-view.fxml");
     }
+    
+    @FXML
+    private void irAFunciones() {
+        App.cambiarVista("funcion-view.fxml");
+    }
 
     @FXML
     private void volverAlMenu() {
