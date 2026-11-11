@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="650.0" prefWidth="1000.0"
+            xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="uniquindio.edu.co.proyectofinal.controller.ReportesController">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+            <children>
+                <Button text="Volver al menú" onAction="#volverAlMenu" />
+                <Label text="Reportes" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="15.0">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+            <children>
+                <Label text="Resumen de ventas" style="-fx-font-size: 15px; -fx-font-weight: bold;" />
+                <GridPane hgap="20.0" vgap="8.0">
+                    <columnConstraints>
+                        <!-- Columna de etiquetas y columna de valores -->
+                    </columnConstraints>
+                    <children>
+                        <Label text="Entradas vendidas" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                        <Label fx:id="lblTotalEntradas" text="0" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                        <Label text="Ingresos" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                        <Label fx:id="lblTotalIngresos" text="0" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                        <Label text="Película más vendida" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                        <Label fx:id="lblPeliculaMasVendida" text="Sin ventas activas"
+                               GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                    </children>
+                </GridPane>
+
+                <Separator />
+
+                <Label text="Ocupación por función" style="-fx-font-size: 15px; -fx-font-weight: bold;" />
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                    <children>
+                        <ComboBox fx:id="cmbFuncion" prefWidth="450.0" />
+                        <Label fx:id="lblOcupacion" text="Seleccione una función." />
+                    </children>
+                </HBox>
+
+                <Separator />
+
+                <Label text="Funciones por fecha" style="-fx-font-size: 15px; -fx-font-weight: bold;" />
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Label text="Fecha:" />
+                        <DatePicker fx:id="dpFecha" />
+                    </children>
+                </HBox>
+                <TableView fx:id="tablaFunciones" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colCodigo" prefWidth="80.0" text="Código" />
+                        <TableColumn fx:id="colPelicula" prefWidth="260.0" text="Película" />
+                        <TableColumn fx:id="colSala" prefWidth="140.0" text="Sala" />
+                        <TableColumn fx:id="colHora" prefWidth="90.0" text="Hora" />
+                        <TableColumn fx:id="colDisponibles" prefWidth="110.0" text="Disponibles" />
+                        <TableColumn fx:id="colEstado" prefWidth="120.0" text="Estado" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

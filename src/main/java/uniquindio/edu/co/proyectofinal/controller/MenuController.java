@@ -14,4 +14,9 @@ public class MenuController extends ControladorBase {
     private void irAAdministrador() {
         App.cambiarVista("admin-view.fxml");
     }
+
+    @FXML
+    private void irAReportes() {
+        App.cambiarVista("reportes-view.fxml");
+    }
 }

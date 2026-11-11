@@ -15,5 +15,6 @@
         <Label text="CINEMAUQ" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
         <Button text="Operador" onAction="#irAOperador" prefWidth="220.0" />
         <Button text="Administrador" onAction="#irAAdministrador" prefWidth="220.0" />
+        <Button text="Reportes" onAction="#irAReportes" prefWidth="220.0" />
     </children>
 </VBox>
