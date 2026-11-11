@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Sala {
 
-    private static final int ASIENTOS_POR_FILA = 10;
+    private static final int ASIENTOS_POR_FILA = 5;
 
     private String codigo;
     private String nombre;

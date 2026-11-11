@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="600.0" prefWidth="1100.0"
+            xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="uniquindio.edu.co.proyectofinal.controller.OperadorController">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+            <children>
+                <Button text="Volver al menú" onAction="#volverAlMenu" />
+                <Label text="Operador de taquilla"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="Películas disponibles">
+                    <content>
+                        <TableView fx:id="tablaPeliculas">
+                            <columns>
+                                <TableColumn fx:id="colPeliculaCodigo" prefWidth="80.0" text="Código" />
+                                <TableColumn fx:id="colPeliculaNombre" prefWidth="260.0" text="Nombre" />
+                                <TableColumn fx:id="colPeliculaGenero" prefWidth="180.0" text="Género" />
+                                <TableColumn fx:id="colPeliculaDuracion" prefWidth="120.0" text="Duración (min)" />
+                                <TableColumn fx:id="colPeliculaClasificacion" prefWidth="140.0" text="Clasificación" />
+                            </columns>
+                        </TableView>
+                    </content>
+                </Tab>
+                <Tab text="Funciones y disponibilidad">
+                    <content>
+                        <BorderPane>
+                            <top>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                    <children>
+                                        <Label text="Fecha:" />
+                                        <DatePicker fx:id="dpFiltro" />
+                                        <Button text="Ver todas" onAction="#verTodasLasFunciones" />
+                                    </children>
+                                </HBox>
+                            </top>
+                            <center>
+                                <TableView fx:id="tablaFunciones">
+                                    <columns>
+                                        <TableColumn fx:id="colCodigo" prefWidth="70.0" text="Código" />
+                                        <TableColumn fx:id="colPelicula" prefWidth="200.0" text="Película" />
+                                        <TableColumn fx:id="colSala" prefWidth="110.0" text="Sala" />
+                                        <TableColumn fx:id="colFecha" prefWidth="100.0" text="Fecha" />
+                                        <TableColumn fx:id="colHora" prefWidth="80.0" text="Hora" />
+                                        <TableColumn fx:id="colDisponibles" prefWidth="100.0" text="Disponibles" />
+                                        <TableColumn fx:id="colEstado" prefWidth="110.0" text="Estado" />
+                                    </columns>
+                                </TableView>
+                            </center>
+                            <right>
+                                <VBox prefWidth="380.0" spacing="10.0">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                    <children>
+                                        <Label text="Mapa de asientos" style="-fx-font-weight: bold;" />
+                                        <HBox spacing="10.0">
+                                            <children>
+                                                <Label text="Disponible"
+                                                       style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 4 8;" />
+                                                <Label text="Ocupado"
+                                                       style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 4 8;" />
+                                            </children>
+                                        </HBox>
+                                        <ScrollPane fitToWidth="true" prefHeight="380.0">
+                                            <content>
+                                                <GridPane fx:id="mapaAsientos" hgap="4.0" vgap="4.0" />
+                                            </content>
+                                        </ScrollPane>
+                                        <Label fx:id="lblResumen" wrapText="true" />
+                                    </children>
+                                </VBox>
+                            </right>
+                        </BorderPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+</BorderPane>

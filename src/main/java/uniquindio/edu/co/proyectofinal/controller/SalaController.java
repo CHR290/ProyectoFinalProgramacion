@@ -121,7 +121,7 @@ public class SalaController extends ControladorBase {
     private void irAPeliculas() {
         App.cambiarVista("admin-view.fxml");
     }
-    
+
     @FXML
     private void irAFunciones() {
         App.cambiarVista("funcion-view.fxml");
@@ -154,8 +154,6 @@ public class SalaController extends ControladorBase {
     private void mostrarMensaje(String texto) {
         lblMensaje.setText(texto);
     }
-
-    // ===== Validación de formulario (solo formato) =====
 
     private String leerNombre() {
         String texto = txtNombre.getText().trim();

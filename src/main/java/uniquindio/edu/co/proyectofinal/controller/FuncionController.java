@@ -92,7 +92,6 @@ public class FuncionController extends ControladorBase {
 
     @Override
     protected void alCargarCinema() {
-        // Solo se ofrecen películas y salas disponibles para programar
         cmbPelicula.getItems().setAll(cinema.consultarPeliculas().stream()
                 .filter(Pelicula::estaDisponible)
                 .collect(Collectors.toList()));
@@ -192,8 +191,6 @@ public class FuncionController extends ControladorBase {
     private void mostrarMensaje(String texto) {
         lblMensaje.setText(texto);
     }
-
-    // ===== Validación de formulario (solo formato) =====
 
     private Pelicula leerPelicula() {
         Pelicula pelicula = cmbPelicula.getValue();
