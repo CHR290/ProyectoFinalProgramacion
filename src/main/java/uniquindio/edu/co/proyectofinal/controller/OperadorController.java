@@ -51,6 +51,7 @@ public class OperadorController extends ControladorBase {
     @FXML private TableColumn<Funcion, String> colSala;
     @FXML private TableColumn<Funcion, LocalDate> colFecha;
     @FXML private TableColumn<Funcion, LocalTime> colHora;
+    @FXML private TableColumn<Funcion, Double> colValor;
     @FXML private TableColumn<Funcion, Integer> colDisponibles;
     @FXML private TableColumn<Funcion, EstadoFuncion> colEstado;
     @FXML private GridPane mapaAsientos;
@@ -91,6 +92,7 @@ public class OperadorController extends ControladorBase {
                 new SimpleStringProperty(c.getValue().getSala().getNombre()));
         colFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         colHora.setCellValueFactory(new PropertyValueFactory<>("hora"));
+        colValor.setCellValueFactory(new PropertyValueFactory<>("valorBase"));
         colDisponibles.setCellValueFactory(new PropertyValueFactory<>("asientosDisponibles"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
         tablaFunciones.setItems(datosFunciones);
@@ -106,7 +108,8 @@ public class OperadorController extends ControladorBase {
         cmbTipoEntrada.setConverter(new StringConverter<TipoEntrada>() {
             @Override
             public String toString(TipoEntrada tipo) {
-                return tipo == null ? "" : tipo.name() + " - $" + (long) tipo.getPrecio();
+                return tipo == null ? "" : tipo.name() + " - "
+                                           + Math.round(tipo.getFactor() * 100) + "% del valor base";
             }
 
             @Override

@@ -26,6 +26,7 @@ public class AdminController extends ControladorBase {
     @FXML private TableColumn<Pelicula, Clasificacion> colClasificacion;
     @FXML private TableColumn<Pelicula, EstadoPelicula> colEstado;
 
+    @FXML private TextField txtCodigo;
     @FXML private TextField txtNombre;
     @FXML private TextField txtGenero;
     @FXML private TextField txtDuracion;
@@ -63,7 +64,8 @@ public class AdminController extends ControladorBase {
     @FXML
     private void registrarPelicula() {
         try {
-            Pelicula nueva = cinema.registrarPelicula(
+            // El código es opcional: si queda vacío, Cinema lo genera
+            Pelicula nueva = cinema.registrarPelicula(txtCodigo.getText(),
                     leerNombre(), leerGenero(), leerDuracion(), leerClasificacion());
             refrescarTabla();
             limpiarFormulario();
@@ -124,6 +126,7 @@ public class AdminController extends ControladorBase {
 
     @FXML
     private void limpiarFormulario() {
+        txtCodigo.clear();
         txtNombre.clear();
         txtGenero.clear();
         txtDuracion.clear();
@@ -155,6 +158,7 @@ public class AdminController extends ControladorBase {
         if (pelicula == null) {
             return;
         }
+        txtCodigo.clear(); // el código solo se escribe al registrar
         txtNombre.setText(pelicula.getNombre());
         txtGenero.setText(pelicula.getGenero());
         txtDuracion.setText(String.valueOf(pelicula.getDuracionMinutos()));

@@ -25,7 +25,7 @@ public class Venta {
         this.asiento = asiento;
         this.tipoEntrada = tipoEntrada;
         this.fechaHora = fechaHora;
-        this.valorPagado = tipoEntrada.getPrecio();
+        this.valorPagado = tipoEntrada.calcularValor(funcion.getValorBase());
         this.estado = EstadoVenta.ACTIVA;
     }
 

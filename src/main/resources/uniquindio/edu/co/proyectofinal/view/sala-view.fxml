@@ -43,6 +43,8 @@
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
             <children>
+                <Label text="Código (opcional, solo al registrar)" />
+                <TextField fx:id="txtCodigo" promptText="Automático si se deja vacío" />
                 <Label text="Nombre" />
                 <TextField fx:id="txtNombre" />
                 <Label text="Capacidad (asientos)" />

@@ -22,6 +22,7 @@ public class SalaController extends ControladorBase {
     @FXML private TableColumn<Sala, Integer> colCapacidad;
     @FXML private TableColumn<Sala, EstadoSala> colEstado;
 
+    @FXML private TextField txtCodigo;
     @FXML private TextField txtNombre;
     @FXML private TextField txtCapacidad;
     @FXML private Button btnHabilitar;
@@ -53,7 +54,8 @@ public class SalaController extends ControladorBase {
     @FXML
     private void registrarSala() {
         try {
-            Sala nueva = cinema.registrarSala(leerNombre(), leerCapacidad());
+            // El código es opcional: si queda vacío, Cinema lo genera
+            Sala nueva = cinema.registrarSala(txtCodigo.getText(), leerNombre(), leerCapacidad());
             refrescarTabla();
             limpiarFormulario();
             mostrarMensaje("Sala " + nueva.getCodigo() + " registrada.");
@@ -112,6 +114,7 @@ public class SalaController extends ControladorBase {
 
     @FXML
     private void limpiarFormulario() {
+        txtCodigo.clear();
         txtNombre.clear();
         txtCapacidad.clear();
         tablaSalas.getSelectionModel().clearSelection();
@@ -141,6 +144,7 @@ public class SalaController extends ControladorBase {
         if (sala == null) {
             return;
         }
+        txtCodigo.clear(); // el código solo se escribe al registrar
         txtNombre.setText(sala.getNombre());
         txtCapacidad.setText(String.valueOf(sala.getCapacidad()));
     }

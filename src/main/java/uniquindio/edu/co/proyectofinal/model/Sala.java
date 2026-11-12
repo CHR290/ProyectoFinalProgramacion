@@ -10,19 +10,18 @@ public class Sala {
 
     private static final int ASIENTOS_POR_FILA = 5;
 
-    private String codigo;
+    private final String codigo;
     private String nombre;
     private int capacidad;
     private EstadoSala estado;
-    private List<Asiento> asientos;
+    private final List<Asiento> asientos = new ArrayList<>();
 
     public Sala(String codigo, String nombre, int capacidad) {
+        validarCapacidad(capacidad);
         this.codigo = codigo;
         this.nombre = nombre;
         this.capacidad = capacidad;
         this.estado = EstadoSala.DISPONIBLE;
-        this.asientos = new ArrayList<>();
-        validarCapacidad(capacidad);
         generarAsientos();
     }
 
@@ -42,8 +41,12 @@ public class Sala {
         return estado;
     }
 
-    public int getAsientosPorFila() {
-        return ASIENTOS_POR_FILA;
+    public boolean estaDisponible() {
+        return estado == EstadoSala.DISPONIBLE;
+    }
+
+    public List<Asiento> getAsientos() {
+        return Collections.unmodifiableList(asientos);
     }
 
     public void modificar(String nombre, int capacidad) {
@@ -55,10 +58,6 @@ public class Sala {
         }
     }
 
-    public boolean estaDisponible() {
-        return estado == EstadoSala.DISPONIBLE;
-    }
-
     public void habilitar() {
         estado = EstadoSala.DISPONIBLE;
     }
@@ -67,11 +66,7 @@ public class Sala {
         estado = EstadoSala.FUERA_DE_SERVICIO;
     }
 
-    public List<Asiento> getAsientos() {
-        return asientos;
-    }
-
-    public void generarAsientos(){
+    private void generarAsientos() {
         asientos.clear();
         for (int i = 0; i < capacidad; i++) {
             char fila = (char) ('A' + i / ASIENTOS_POR_FILA);
@@ -79,6 +74,7 @@ public class Sala {
             asientos.add(new Asiento(fila, numero));
         }
     }
+
     private void validarCapacidad(int capacidad) {
         if (capacidad <= 0) {
             throw new IllegalArgumentException("La capacidad debe ser mayor que cero");

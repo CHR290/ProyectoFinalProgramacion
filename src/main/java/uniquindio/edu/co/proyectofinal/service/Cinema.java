@@ -34,13 +34,40 @@ public class Cinema {
 
     public Pelicula registrarPelicula(String nombrePelicula, String genero,
                                       int duracionMinutos, Clasificacion clasificacion) {
+        return registrarPelicula(null, nombrePelicula, genero, duracionMinutos, clasificacion);
+    }
+
+    // Si el código viene vacío se genera automáticamente (P001, P002...).
+    // Si el administrador escribe uno, debe ser único.
+    public Pelicula registrarPelicula(String codigoIngresado, String nombrePelicula, String genero,
+                                      int duracionMinutos, Clasificacion clasificacion) {
         validarNombrePelicula(nombrePelicula, null);
-        String codigo = generarCodigo('P', contadorPeliculas + 1);
+        boolean automatico = estaVacio(codigoIngresado);
+        int numero = contadorPeliculas + 1;
+        String codigo;
+        if (automatico) {
+            while (existePelicula(generarCodigo('P', numero))) {
+                numero++;
+            }
+            codigo = generarCodigo('P', numero);
+        } else {
+            codigo = codigoIngresado.trim().toUpperCase();
+            if (existePelicula(codigo)) {
+                throw new PeliculaDuplicadaException(
+                        "Ya existe una película con el código " + codigo);
+            }
+        }
         Pelicula pelicula = new Pelicula(codigo, nombrePelicula, genero,
                 duracionMinutos, clasificacion);
         peliculas.add(pelicula);
-        contadorPeliculas++;
+        if (automatico) {
+            contadorPeliculas = numero;
+        }
         return pelicula;
+    }
+
+    private boolean existePelicula(String codigo) {
+        return peliculas.stream().anyMatch(p -> p.getCodigo().equals(codigo));
     }
 
     public List<Pelicula> consultarPeliculas() {
@@ -82,12 +109,37 @@ public class Cinema {
     }
 
     public Sala registrarSala(String nombreSala, int capacidad) {
+        return registrarSala(null, nombreSala, capacidad);
+    }
+
+    // Si el código viene vacío se genera automáticamente (S001, S002...).
+    // Si el administrador escribe uno, debe ser único.
+    public Sala registrarSala(String codigoIngresado, String nombreSala, int capacidad) {
         validarNombreSalaLibre(nombreSala, null);
-        String codigo = generarCodigo('S', contadorSalas + 1);
+        boolean automatico = estaVacio(codigoIngresado);
+        int numero = contadorSalas + 1;
+        String codigo;
+        if (automatico) {
+            while (existeSala(generarCodigo('S', numero))) {
+                numero++;
+            }
+            codigo = generarCodigo('S', numero);
+        } else {
+            codigo = codigoIngresado.trim().toUpperCase();
+            if (existeSala(codigo)) {
+                throw new SalaDuplicadaException("Ya existe una sala con el código " + codigo);
+            }
+        }
         Sala sala = new Sala(codigo, nombreSala, capacidad);
         salas.add(sala);
-        contadorSalas++;
+        if (automatico) {
+            contadorSalas = numero;
+        }
         return sala;
+    }
+
+    private boolean existeSala(String codigo) {
+        return salas.stream().anyMatch(s -> s.getCodigo().equals(codigo));
     }
 
     public List<Sala> consultarSalas() {
@@ -131,8 +183,15 @@ public class Cinema {
         return String.format("%c%03d", inicial, numero);
     }
 
+    private boolean estaVacio(String texto) {
+        return texto == null || texto.isBlank();
+    }
+
     public Funcion programarFuncion(String codigoPelicula, String codigoSala,
                                     LocalDate fecha, LocalTime hora, double valorBase) {
+        if (valorBase <= 0) {
+            throw new IllegalArgumentException("El valor base debe ser mayor que cero");
+        }
         Pelicula pelicula = buscarPelicula(codigoPelicula);
         if (!pelicula.estaDisponible()) {
             throw new PeliculaNoDisponibleException(

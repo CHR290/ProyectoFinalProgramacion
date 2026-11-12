@@ -73,6 +73,7 @@
                                         <TableColumn fx:id="colSala" prefWidth="110.0" text="Sala" />
                                         <TableColumn fx:id="colFecha" prefWidth="100.0" text="Fecha" />
                                         <TableColumn fx:id="colHora" prefWidth="80.0" text="Hora" />
+                                        <TableColumn fx:id="colValor" prefWidth="130.0" text="Valor base (general)" />
                                         <TableColumn fx:id="colDisponibles" prefWidth="100.0" text="Disponibles" />
                                         <TableColumn fx:id="colEstado" prefWidth="110.0" text="Estado" />
                                     </columns>

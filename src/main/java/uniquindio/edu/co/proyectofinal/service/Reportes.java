@@ -3,6 +3,7 @@ package uniquindio.edu.co.proyectofinal.service;
 import uniquindio.edu.co.proyectofinal.model.Funcion;
 import uniquindio.edu.co.proyectofinal.model.Pelicula;
 import uniquindio.edu.co.proyectofinal.model.Venta;
+import uniquindio.edu.co.proyectofinal.model.enums.EstadoFuncion;
 import uniquindio.edu.co.proyectofinal.model.enums.EstadoVenta;
 
 import java.time.LocalDate;
@@ -57,8 +58,11 @@ public class Reportes {
                 funcion.getAsientosOcupados());
     }
 
+    // Solo las funciones disponibles para la venta (PROGRAMADA)
     public List<Funcion> funcionesPorFecha(LocalDate fecha) {
-        return cinema.consultarFuncionesPorFecha(fecha);
+        return cinema.consultarFuncionesPorFecha(fecha).stream()
+                .filter(funcion -> funcion.getEstado() == EstadoFuncion.PROGRAMADA)
+                .collect(Collectors.toList());
     }
 
     private List<Venta> ventasActivas() {

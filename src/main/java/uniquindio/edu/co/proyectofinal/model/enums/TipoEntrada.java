@@ -1,21 +1,21 @@
 package uniquindio.edu.co.proyectofinal.model.enums;
 
 public enum TipoEntrada {
-    GENERAL(18000, null),
-    ESTUDIANTE(15000, TipoCliente.ESTUDIANTE),
-    NIÑO(10000, TipoCliente.NINO),
-    ADULTO_MAYOR(12000, TipoCliente.ADULTO_MAYOR);
+    GENERAL(1.00, null),
+    ESTUDIANTE(0.80, TipoCliente.ESTUDIANTE),
+    NINO(0.60, TipoCliente.NINO),
+    ADULTO_MAYOR(0.70, TipoCliente.ADULTO_MAYOR);
 
-    private final double precio;
-    private final TipoCliente perfilRequerido;
+    private final double factor;
+    private final TipoCliente perfilRequerido; // null: cualquier cliente puede comprarla
 
-    TipoEntrada(double precio, TipoCliente perfilRequerido) {
-        this.precio = precio;
+    TipoEntrada(double factor, TipoCliente perfilRequerido) {
+        this.factor = factor;
         this.perfilRequerido = perfilRequerido;
     }
 
-    public double getPrecio() {
-        return precio;
+    public double getFactor() {
+        return factor;
     }
 
     public TipoCliente getPerfilRequerido() {
@@ -24,5 +24,9 @@ public enum TipoEntrada {
 
     public boolean permitidaPara(TipoCliente cliente) {
         return perfilRequerido == null || perfilRequerido == cliente;
+    }
+
+    public double calcularValor(double valorBase) {
+        return Math.round(valorBase * factor);
     }
 }
